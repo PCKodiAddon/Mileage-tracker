@@ -88,10 +88,24 @@ export class UI {
             const recordElement = document.createElement('div');
             recordElement.className = 'maintenance-record';
             recordElement.innerHTML = `
-                <h3>${record.type}</h3>
-                <p>Date: ${new Date(record.date).toLocaleDateString()}</p>
-                ${record.notes ? `<p>Notes: ${record.notes}</p>` : ''}
+                <div class="record-header">
+                    <h3>${record.type}</h3>
+                    <button class="delete-btn" data-id="${record.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="record-content">
+                    <p class="record-date">Date: ${new Date(record.date).toLocaleDateString()}</p>
+                    ${record.notes ? `<p class="record-notes">Notes: ${record.notes}</p>` : ''}
+                </div>
             `;
+
+            const deleteBtn = recordElement.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                this.maintenanceTracker.deleteRecord(record.id);
+                this.updateMaintenanceHistory();
+            });
+
             maintenanceList.appendChild(recordElement);
         });
     }
