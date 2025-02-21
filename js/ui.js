@@ -36,6 +36,7 @@ export class UI {
         document.getElementById('totalCost').textContent = this.settings.formatCost(stats.totalCost);
 
         this.chart.updateChart(this.mileageTracker.getChartData());
+        this.updateDashboardMaintenance();
     }
 
     handleMileageFormSubmit() {
@@ -118,6 +119,29 @@ export class UI {
             ).join('\n');
             alert('Maintenance Reminders:\n' + message);
         }
+    }
+
+    updateDashboardMaintenance() {
+        const maintenanceList = document.getElementById('dashboardMaintenanceList');
+        const remindersList = document.getElementById('dashboardReminders');
+        
+        // Update recent maintenance
+        const recentRecords = this.maintenanceTracker.getRecords().slice(0, 3);
+        maintenanceList.innerHTML = recentRecords.map(record => `
+            <div class="dashboard-maintenance-item">
+                <span class="maintenance-type">${record.type}</span>
+                <span class="maintenance-date">${new Date(record.date).toLocaleDateString()}</span>
+            </div>
+        `).join('');
+
+        // Update upcoming maintenance
+        const upcomingReminders = this.maintenanceTracker.getReminders().slice(0, 3);
+        remindersList.innerHTML = upcomingReminders.map(reminder => `
+            <div class="dashboard-reminder-item">
+                <span class="reminder-type">${reminder.type}</span>
+                <span class="reminder-date">${new Date(reminder.dueDate).toLocaleDateString()}</span>
+            </div>
+        `).join('');
     }
 
     toggleTheme() {
