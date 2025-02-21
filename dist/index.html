@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mileage Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script type="module" crossorigin src="/Mileage-tracker/assets/index-Ce28lkNI.js"></script>
-  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-CogUde4G.css">
+  <script type="module" crossorigin src="/Mileage-tracker/assets/index-B_LCc8E7.js"></script>
+  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-CxN1hJ3e.css">
 </head>
 <body class="light-mode">
     <div class="app-container">
@@ -71,7 +71,14 @@
                     </div>
                     <div class="form-group">
                         <label for="odometer">Odometer Reading:</label>
-                        <input type="number" id="odometer" required step="0.1">
+                        <input type="number" id="odometer" required step="1" min="0">
+                        <small class="help-text">Current mileage on your vehicle</small>
+                    </div>
+                    <div class="form-group" id="oilChangeWarning" style="display: none;">
+                        <div class="warning-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Oil change will be due in <span id="milesUntilChange">0</span> miles
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="gallons">Fuel Added:</label>
@@ -96,18 +103,54 @@
                         </div>
                         <div class="form-group">
                             <label for="maintenanceType">Type:</label>
-                            <select id="maintenanceType" required>
+                            <select id="maintenanceType" onchange="ui.handleMaintenanceTypeChange()" required>
                                 <option value="oil">Oil Change</option>
                                 <option value="tires">Tire Rotation</option>
                                 <option value="brakes">Brake Service</option>
                                 <option value="other">Other</option>
                             </select>
                         </div>
+                        <div class="form-group" id="oilChangeMileageGroup" style="display: none;">
+                            <label for="oilChangeMileage">Current Odometer Reading:</label>
+                            <input type="number" id="oilChangeMileage" min="0" step="1">
+                            <small class="help-text">Current mileage at oil change</small>
+                        </div>
+                        <div class="form-group" id="nextOilChangeMileageGroup" style="display: none;">
+                            <label for="nextOilChangeMileage">Next Oil Change Due At:</label>
+                            <input type="number" id="nextOilChangeMileage" min="0" step="1" value="7500">
+                            <small class="help-text">Miles until next oil change (default 7500)</small>
+                        </div>
                         <div class="form-group">
                             <label for="maintenanceNotes">Notes:</label>
                             <textarea id="maintenanceNotes"></textarea>
                         </div>
                         <button type="submit" class="btn">Save Record</button>
+                    </form>
+                    <form id="reminderForm" class="entry-form">
+                        <h2>Add Maintenance Reminder</h2>
+                        <div class="form-group">
+                            <label for="reminderType">Type:</label>
+                            <select id="reminderType" onchange="ui.handleReminderTypeChange()" required>
+                                <option value="oil">Oil Change</option>
+                                <option value="tires">Tire Rotation</option>
+                                <option value="brakes">Brake Service</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="mileageIntervalGroup" style="display: none;">
+                            <label for="mileageInterval">Mileage Interval:</label>
+                            <input type="number" id="mileageInterval" value="7500" min="1000">
+                            <small class="help-text">Miles between oil changes</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="reminderDueDate">Due Date:</label>
+                            <input type="date" id="reminderDueDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reminderInterval">Repeat Interval (days):</label>
+                            <input type="number" id="reminderInterval" min="1" value="30">
+                        </div>
+                        <button type="submit" class="btn">Add Reminder</button>
                     </form>
                     <div class="maintenance-history">
                         <h2>Maintenance History</h2>

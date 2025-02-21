@@ -1,0 +1,183 @@
+.maintenance-container {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin: 2rem 0;
+    padding: 0 1rem;
+}
+
+.maintenance-form-section,
+.reminder-form-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.maintenance-form-section:hover,
+.reminder-form-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.maintenance-form-section h2,
+.reminder-form-section h2 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.maintenance-overview,
+.maintenance-reminders {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.dashboard-maintenance-item,
+.dashboard-reminder-item {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.dashboard-maintenance-item:hover,
+.dashboard-reminder-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.maintenance-header,
+.reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.maintenance-type,
+.reminder-type {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    text-transform: capitalize;
+}
+
+.maintenance-date,
+.reminder-date {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.maintenance-notes {
+    margin-top: 0.75rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.8;
+    padding: 0.75rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.no-records {
+    color: var(--text-color);
+    text-align: center;
+    padding: 1.5rem;
+    font-style: italic;
+    opacity: 0.7;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    .maintenance-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 0 0.5rem;
+    }
+
+    .maintenance-form-section,
+    .reminder-form-section {
+        padding: 1.75rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-maintenance-item,
+    .dashboard-reminder-item {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .maintenance-notes {
+        padding: 0.875rem;
+        margin-top: 0.875rem;
+    }
+}
+
+.maintenance-record {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.maintenance-record:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.record-header h3 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);
+}
+
+.record-content {
+    color: var(--text-color);
+    font-size: 0.95rem;
+}

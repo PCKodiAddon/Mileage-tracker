@@ -31,18 +31,15 @@ export class MaintenanceTracker {
         return record;
     }
 
-    addReminder(type, dueDate, interval) {
+    addReminder(reminderData) {
         const reminder = {
             id: Date.now(),
-            type,
-            dueDate,
-            interval, // in days
+            ...reminderData,
             completed: false
         };
-
+        
         this.reminders.push(reminder);
         this.saveRecords();
-        return reminder;
     }
 
     getRecords() {
@@ -50,7 +47,17 @@ export class MaintenanceTracker {
     }
 
     getReminders() {
-        return this.reminders.filter(reminder => !reminder.completed);
+        return this.reminders
+            .filter(reminder => !reminder.completed)
+            .sort((a, b) => {
+                // Sort by mileage due for oil changes
+                if (a.type === 'oil' && b.type === 'oil' && 
+                    a.mileageData && b.mileageData) {
+                    return a.mileageData.nextDueMileage - b.mileageData.nextDueMileage;
+                }
+                // Sort by date for others
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            });
     }
 
     getDueReminders() {
@@ -104,5 +111,13 @@ export class MaintenanceTracker {
         a.download = 'maintenance-data.json';
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    getFormattedReminder(reminder) {
+        let text = `${reminder.type} - Due: ${new Date(reminder.dueDate).toLocaleDateString()}`;
+        if (reminder.mileageData) {
+            text += ` (Next due at ${reminder.mileageData.nextDueMileage} miles)`;
+        }
+        return text;
     }
 }

@@ -13,14 +13,14 @@ const chart = new Chart();
 const ui = new UI(mileageTracker, maintenanceTracker, settings, chart);
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Load saved data
     settings.loadSettings();
     mileageTracker.loadEntries();
     maintenanceTracker.loadRecords();
 
     // Initialize UI
-    ui.initializeUI();
+    await ui.initializeUI();
     ui.updateDashboard();
     ui.updateMaintenanceHistory();
 
@@ -40,6 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maintenanceForm').addEventListener('submit', (e) => {
         e.preventDefault();
         ui.handleMaintenanceFormSubmit();
+    });
+
+    document.getElementById('reminderForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        ui.handleReminderFormSubmit();
     });
 
     document.getElementById('settingsForm').addEventListener('submit', (e) => {
