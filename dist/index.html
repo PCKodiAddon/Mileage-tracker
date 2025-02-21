@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mileage Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" crossorigin src="/Mileage-tracker/assets/index-CKBvntJs.js"></script>
+  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-B-8__qae.css">
+</head>
+<body class="light-mode">
+    <div class="app-container">
+        <header>
+            <h1>Mileage Tracker</h1>
+            <div class="theme-toggle">
+                <button id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+            <button class="nav-btn" data-page="add-entry">Add Entry</button>
+            <button class="nav-btn" data-page="maintenance">Maintenance</button>
+            <button class="nav-btn" data-page="settings">Settings</button>
+        </nav>
+
+        <main>
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="page active">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Average MPG</h3>
+                        <p id="avgMpg">0.0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Miles</h3>
+                        <p id="totalMiles">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Fuel Cost</h3>
+                        <p id="totalCost">$0.00</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mileageChart"></canvas>
+                </div>
+                <div class="export-section">
+                    <button id="exportData" class="btn">Export Data</button>
+                </div>
+            </section>
+
+            <!-- Add Entry Page -->
+            <section id="add-entry" class="page">
+                <form id="mileageForm" class="entry-form">
+                    <h2>Add Mileage Entry</h2>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="odometer">Odometer Reading:</label>
+                        <input type="number" id="odometer" required step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="gallons">Fuel Added:</label>
+                        <input type="number" id="gallons" required step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label for="fuelCost">Fuel Cost:</label>
+                        <input type="number" id="fuelCost" required step="0.01">
+                    </div>
+                    <button type="submit" class="btn">Save Entry</button>
+                </form>
+            </section>
+
+            <!-- Maintenance Page -->
+            <section id="maintenance" class="page">
+                <div class="maintenance-container">
+                    <form id="maintenanceForm" class="entry-form">
+                        <h2>Add Maintenance Record</h2>
+                        <div class="form-group">
+                            <label for="maintenanceDate">Date:</label>
+                            <input type="date" id="maintenanceDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceType">Type:</label>
+                            <select id="maintenanceType" required>
+                                <option value="oil">Oil Change</option>
+                                <option value="tires">Tire Rotation</option>
+                                <option value="brakes">Brake Service</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceNotes">Notes:</label>
+                            <textarea id="maintenanceNotes"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Save Record</button>
+                    </form>
+                    <div class="maintenance-history">
+                        <h2>Maintenance History</h2>
+                        <div id="maintenanceList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settings" class="page">
+                <form id="settingsForm" class="entry-form">
+                    <h2>Settings</h2>
+                    <div class="form-group">
+                        <label for="units">Distance Units:</label>
+                        <select id="units">
+                            <option value="miles">Miles</option>
+                            <option value="kilometers">Kilometers</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fuelUnits">Fuel Units:</label>
+                        <select id="fuelUnits">
+                            <option value="gallons">Gallons</option>
+                            <option value="liters">Liters</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="efficiencyGoal">Efficiency Goal:</label>
+                        <input type="number" id="efficiencyGoal" step="0.1">
+                    </div>
+                    <button type="submit" class="btn">Save Settings</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

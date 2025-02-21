@@ -1,13 +1,7 @@
+
 export default {
-  server: {
-    port: 8000
-  },
+  base: '/Mileage-tracker/',
   build: {
-    outDir: 'dist',
-    rollupOptions: {
-      input: {
-        main: './index.html'
-      }
-    }
+    outDir: 'dist'
   }
 }
