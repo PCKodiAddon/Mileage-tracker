@@ -58,6 +58,7 @@ export class UI {
 
         this.maintenanceTracker.addRecord(date, type, notes);
         this.updateMaintenanceHistory();
+        this.updateDashboardMaintenance();
         document.getElementById('maintenanceForm').reset();
     }
 
