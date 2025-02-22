@@ -89,29 +89,38 @@ header h1 {
     gap: 0.25rem;
     color: var(--text-color);
     opacity: 0.7;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     border: none;
     background: none;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
 }
 
-/* Make the clickable area larger */
-.nav-btn span,
-.nav-btn i {
-    pointer-events: none; /* Ensure clicks go to the button */
-}
-
-/* Improve touch feedback */
 .nav-btn:active {
     opacity: 1;
     transform: scale(0.95);
+    background: rgba(33, 150, 243, 0.1);
 }
 
 .nav-btn.active {
-    background: none;
-    color: var(--primary-color);
     opacity: 1;
+    color: var(--primary-color);
+}
+
+/* Ensure icons and text don't interfere with clicks */
+.nav-btn i,
+.nav-btn span {
+    pointer-events: none;
+}
+
+/* Improve touch area */
+@media (hover: none) {
+    .nav-btn {
+        padding: 0.75rem 0.5rem;
+        min-height: 48px;
+    }
 }
 
 /* Theme toggle */

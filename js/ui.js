@@ -9,6 +9,15 @@ export class UI {
         document.getElementById('odometer').addEventListener('input', () => {
             this.handleOdometerInput();
         });
+
+        // Add direct click handlers for navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = btn.dataset.page;
+                this.switchPage(pageId);
+            });
+        });
     }
 
     async initializeUI() {
@@ -25,6 +34,7 @@ export class UI {
     }
 
     switchPage(pageId) {
+        // Remove active class from all pages and buttons
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
         });
@@ -32,9 +42,11 @@ export class UI {
             btn.classList.remove('active');
         });
 
+        // Add active class to selected page and button
         document.getElementById(pageId).classList.add('active');
         document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
 
+        // Update dashboard if switching to it
         if (pageId === 'dashboard') {
             this.updateDashboard();
         }

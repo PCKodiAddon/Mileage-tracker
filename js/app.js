@@ -26,13 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await ui.initializeUI();
         ui.updateMaintenanceHistory();
 
-        // Set up navigation
-        document.querySelector('.main-nav').addEventListener('click', (e) => {
-            if (e.target.classList.contains('nav-btn')) {
-                ui.switchPage(e.target.dataset.page);
-            }
-        });
-
         // Set up form submissions
         document.getElementById('mileageForm').addEventListener('submit', (e) => {
             e.preventDefault();
