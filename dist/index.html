@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Mileage Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script type="module" crossorigin src="/Mileage-tracker/assets/index-ddIzAVr5.js"></script>
-  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-CSILnKnp.css">
+  <script type="module" crossorigin src="/Mileage-tracker/assets/index-BjpSDMPP.js"></script>
+  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-eAfAFSiv.css">
 </head>
 <body class="light-mode">
     <div class="app-container">
@@ -20,10 +22,22 @@
         </header>
 
         <nav class="main-nav">
-            <button class="nav-btn active" data-page="dashboard">Dashboard</button>
-            <button class="nav-btn" data-page="add-entry">Add Entry</button>
-            <button class="nav-btn" data-page="maintenance">Maintenance</button>
-            <button class="nav-btn" data-page="settings">Settings</button>
+            <button class="nav-btn active" data-page="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-btn" data-page="add-entry">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Entry</span>
+            </button>
+            <button class="nav-btn" data-page="maintenance">
+                <i class="fas fa-wrench"></i>
+                <span>Service</span>
+            </button>
+            <button class="nav-btn" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </button>
         </nav>
 
         <main>
