@@ -3,27 +3,29 @@ export class Settings {
         this.settings = {
             distanceUnit: 'miles',
             fuelUnit: 'gallons',
-            efficiencyGoal: 30.0,
-            theme: 'light'
+            efficiencyGoal: 25,
+            theme: 'light',
+            currentOdometer: 0,
+            oilChangeInterval: 7500
         };
     }
 
     loadSettings() {
-        const savedSettings = localStorage.getItem('appSettings');
+        const savedSettings = localStorage.getItem('settings');
         if (savedSettings) {
             this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
         }
-        this.applyTheme();
+        document.body.className = this.settings.theme === 'dark' ? 'dark-mode' : 'light-mode';
     }
 
     saveSettings() {
-        localStorage.setItem('appSettings', JSON.stringify(this.settings));
+        localStorage.setItem('settings', JSON.stringify(this.settings));
     }
 
     updateSettings(newSettings) {
         this.settings = { ...this.settings, ...newSettings };
-        this.saveSettings();
-        this.applyTheme();
+        localStorage.setItem('settings', JSON.stringify(this.settings));
+        document.body.className = this.settings.theme === 'dark' ? 'dark-mode' : 'light-mode';
     }
 
     getSettings() {
@@ -33,7 +35,7 @@ export class Settings {
     toggleTheme() {
         this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
         this.saveSettings();
-        this.applyTheme();
+        document.body.className = this.settings.theme === 'dark' ? 'dark-mode' : 'light-mode';
     }
 
     applyTheme() {
@@ -75,5 +77,18 @@ export class Settings {
             style: 'currency',
             currency: 'USD'
         }).format(value);
+    }
+
+    getCurrentMileage() {
+        return this.settings.currentOdometer || 0;
+    }
+
+    getOilChangeInterval() {
+        return this.settings.oilChangeInterval || 7500;
+    }
+
+    updateMileage(newMileage) {
+        this.settings.currentOdometer = newMileage;
+        this.saveSettings();
     }
 }

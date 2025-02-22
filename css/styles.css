@@ -143,20 +143,28 @@ header {
 .chart-container {
     position: relative;
     width: 100%;
-    max-height: 400px;
-    margin: 1rem 0;
+    height: 400px;
+    margin: 1.5rem 0;
     background: var(--card-bg);
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: var(--shadow);
-    margin-bottom: 2rem;
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .chart-container:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode adjustments for the chart */
+.dark-mode .chart-container {
+    background: var(--card-bg);
+}
+
+.dark-mode #mileageChart {
+    filter: brightness(0.9);
 }
 
 /* Forms */
@@ -547,4 +555,57 @@ textarea {
         grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
     }
+}
+
+.dashboard-reminder-item.overdue {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.reminder-status.overdue {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    font-weight: 600;
+}
+
+#currentMileageGroup,
+#nextMileageGroup {
+    background: var(--bg-color);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+#currentMileageGroup input,
+#nextMileageGroup input {
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-reminder-item .reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dashboard-reminder-item .delete-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.dashboard-reminder-item .delete-btn:hover {
+    opacity: 1;
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);
+}
+
+.dashboard-reminder-item:hover .delete-btn {
+    opacity: 1;
 }

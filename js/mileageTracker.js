@@ -61,10 +61,16 @@ export class MileageTracker {
     }
 
     getChartData() {
-        return this.entries.map(entry => ({
-            date: entry.date,
-            mpg: entry.mpg
-        }));
+        const sortedEntries = this.getEntries().sort((a, b) => new Date(a.date) - new Date(b.date));
+        return {
+            dates: sortedEntries.map(entry => entry.date),
+            mpg: sortedEntries.map(entry => {
+                const prevEntry = this.entries[this.entries.indexOf(entry) - 1];
+                if (!prevEntry) return 0;
+                const distance = entry.odometer - prevEntry.odometer;
+                return distance / entry.gallons;
+            })
+        };
     }
 
     exportData() {

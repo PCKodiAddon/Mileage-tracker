@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mileage Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script type="module" crossorigin src="/Mileage-tracker/assets/index-fObJLuIt.js"></script>
-  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-Du5fqOoI.css">
+  <script type="module" crossorigin src="/Mileage-tracker/assets/index-ddIzAVr5.js"></script>
+  <link rel="stylesheet" crossorigin href="/Mileage-tracker/assets/index-CSILnKnp.css">
 </head>
 <body class="light-mode">
     <div class="app-container">
@@ -110,16 +110,6 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        <div class="form-group" id="oilChangeMileageGroup" style="display: none;">
-                            <label for="oilChangeMileage">Current Odometer Reading:</label>
-                            <input type="number" id="oilChangeMileage" min="0" step="1">
-                            <small class="help-text">Current mileage at oil change</small>
-                        </div>
-                        <div class="form-group" id="nextOilChangeMileageGroup" style="display: none;">
-                            <label for="nextOilChangeMileage">Next Oil Change Due At:</label>
-                            <input type="number" id="nextOilChangeMileage" min="0" step="1" value="7500">
-                            <small class="help-text">Miles until next oil change (default 7500)</small>
-                        </div>
                         <div class="form-group">
                             <label for="maintenanceNotes">Notes:</label>
                             <textarea id="maintenanceNotes"></textarea>
@@ -164,6 +154,16 @@
                 <form id="settingsForm" class="entry-form">
                     <h2>Settings</h2>
                     <div class="form-group">
+                        <label for="currentOdometer">Current Odometer Reading:</label>
+                        <input type="number" id="currentOdometer" min="0" step="1" required>
+                        <small class="help-text">Your vehicle's current mileage</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="oilChangeInterval">Oil Change Interval (miles):</label>
+                        <input type="number" id="oilChangeInterval" value="7500" min="1000" required>
+                        <small class="help-text">Miles between oil changes (default 7500)</small>
+                    </div>
+                    <div class="form-group">
                         <label for="units">Distance Units:</label>
                         <select id="units">
                             <option value="miles">Miles</option>
@@ -188,5 +188,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Make ui instance available globally for the delete button onclick handler
+        window.ui = null;
+    </script>
 </body>
 </html>

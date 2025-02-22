@@ -17,6 +17,7 @@ export class UI {
             await this.chart.initializeChart();
             this.loadSettingsForm();
             this.updateMaintenanceHistory();
+            this.updateDashboard();
             this.checkDueReminders();
         } finally {
             this.hideLoading();
@@ -40,22 +41,36 @@ export class UI {
     }
 
     updateDashboard() {
-        const stats = this.mileageTracker.getStats();
-        document.getElementById('avgMpg').textContent = this.settings.formatEfficiency(stats.avgMpg);
-        document.getElementById('totalMiles').textContent = this.settings.formatDistance(stats.totalMiles);
-        document.getElementById('totalCost').textContent = this.settings.formatCost(stats.totalCost);
+        try {
+            const stats = this.mileageTracker.getStats();
+            document.getElementById('avgMpg').textContent = this.settings.formatEfficiency(stats.avgMpg || 0);
+            document.getElementById('totalMiles').textContent = this.settings.formatDistance(stats.totalMiles || 0);
+            document.getElementById('totalCost').textContent = this.settings.formatCost(stats.totalCost || 0);
 
-        this.chart.updateChart(this.mileageTracker.getChartData());
-        this.updateDashboardMaintenance();
+            const chartData = this.mileageTracker.getChartData();
+            if (this.chart) {
+                this.chart.updateChart(chartData);
+            }
+            this.updateDashboardMaintenance();
+        } catch (error) {
+            console.error('Error updating dashboard:', error);
+        }
     }
 
     handleMileageFormSubmit() {
         const date = document.getElementById('date').value;
-        const odometer = document.getElementById('odometer').value;
-        const gallons = document.getElementById('gallons').value;
-        const fuelCost = document.getElementById('fuelCost').value;
+        const odometer = parseFloat(document.getElementById('odometer').value);
+        const gallons = parseFloat(document.getElementById('gallons').value);
+        const fuelCost = parseFloat(document.getElementById('fuelCost').value);
 
         this.mileageTracker.addEntry(date, odometer, gallons, fuelCost);
+        
+        // Update current odometer in settings
+        this.settings.updateSettings({
+            ...this.settings.getSettings(),
+            currentOdometer: odometer
+        });
+        
         this.updateDashboard();
         document.getElementById('mileageForm').reset();
         this.switchPage('dashboard');
@@ -67,26 +82,29 @@ export class UI {
         let notes = document.getElementById('maintenanceNotes').value;
 
         if (type === 'oil') {
-            const currentMileage = parseInt(document.getElementById('oilChangeMileage').value);
-            const nextDueMileage = parseInt(document.getElementById('nextOilChangeMileage').value);
-            const mileageInterval = nextDueMileage - currentMileage;
+            const currentMileage = this.settings.getCurrentMileage();
+            const interval = this.settings.getOilChangeInterval();
+            const nextDueMileage = currentMileage + interval;
             
             notes = `Oil changed at ${currentMileage} miles. Next change due at ${nextDueMileage} miles.\n${notes}`;
             
-            // Update or create oil change reminder
-            this.maintenanceTracker.addReminder('oil', date, 90, {
-                mileageInterval,
-                lastMileage: currentMileage,
-                nextDueMileage: nextDueMileage
-            });
+            // Add reminder for next oil change
+            this.maintenanceTracker.addReminder(
+                type,
+                date,
+                90, // Default interval in days
+                {
+                    currentMileage,
+                    mileageInterval: interval,
+                    nextDueMileage
+                }
+            );
         }
 
         this.maintenanceTracker.addRecord(date, type, notes);
         this.updateMaintenanceHistory();
         this.updateDashboardMaintenance();
         document.getElementById('maintenanceForm').reset();
-        document.getElementById('oilChangeMileageGroup').style.display = 'none';
-        document.getElementById('nextOilChangeMileageGroup').style.display = 'none';
     }
 
     handleReminderTypeChange() {
@@ -105,52 +123,48 @@ export class UI {
         const dueDate = document.getElementById('reminderDueDate').value;
         const interval = parseInt(document.getElementById('reminderInterval').value);
         
-        // Get current mileage from latest entry
-        const entries = this.mileageTracker.getEntries();
-        if (entries.length === 0) {
-            alert('Please add a mileage entry first to set up reminders.');
-            return;
-        }
-        
-        const currentMileage = entries[entries.length - 1].odometer;
-        
         if (type === 'oil') {
-            const mileageInterval = parseInt(document.getElementById('mileageInterval').value);
+            const currentMileage = this.settings.getCurrentMileage();
+            const mileageInterval = this.settings.getOilChangeInterval();
+            
+            if (currentMileage === 0) {
+                alert('Please update your current mileage in Settings first.');
+                this.switchPage('settings');
+                return;
+            }
+            
             const nextDueMileage = currentMileage + mileageInterval;
             
-            this.maintenanceTracker.addReminder({
+            this.maintenanceTracker.addReminder(
                 type,
                 dueDate,
                 interval,
-                mileageData: {
+                {
                     currentMileage,
                     mileageInterval,
                     nextDueMileage
                 }
-            });
+            );
             
-            alert(`Reminder set for oil change:\n` +
-                  `Current mileage: ${currentMileage}\n` +
-                  `Next due at: ${nextDueMileage} miles\n` +
-                  `Date due: ${new Date(dueDate).toLocaleDateString()}`);
+            alert(`Oil Change Reminder Set:\n` +
+                  `Current Mileage: ${currentMileage}\n` +
+                  `Next Due: ${nextDueMileage} miles\n` +
+                  `Date Due: ${new Date(dueDate).toLocaleDateString()}`);
         } else {
-            this.maintenanceTracker.addReminder({
-                type,
-                dueDate,
-                interval
-            });
+            this.maintenanceTracker.addReminder(type, dueDate, interval);
         }
 
         this.updateDashboardMaintenance();
         document.getElementById('reminderForm').reset();
-        document.getElementById('mileageIntervalGroup').style.display = 'none';
     }
 
     handleSettingsFormSubmit() {
         const newSettings = {
             distanceUnit: document.getElementById('units').value,
             fuelUnit: document.getElementById('fuelUnits').value,
-            efficiencyGoal: parseFloat(document.getElementById('efficiencyGoal').value)
+            efficiencyGoal: parseFloat(document.getElementById('efficiencyGoal').value),
+            currentOdometer: parseInt(document.getElementById('currentOdometer').value),
+            oilChangeInterval: parseInt(document.getElementById('oilChangeInterval').value)
         };
 
         this.settings.updateSettings(newSettings);
@@ -163,6 +177,8 @@ export class UI {
         document.getElementById('units').value = currentSettings.distanceUnit;
         document.getElementById('fuelUnits').value = currentSettings.fuelUnit;
         document.getElementById('efficiencyGoal').value = currentSettings.efficiencyGoal;
+        document.getElementById('currentOdometer').value = currentSettings.currentOdometer;
+        document.getElementById('oilChangeInterval').value = currentSettings.oilChangeInterval;
     }
 
     updateMaintenanceHistory() {
@@ -207,93 +223,88 @@ export class UI {
     }
 
     checkDueReminders() {
-        const entries = this.mileageTracker.getEntries();
-        if (entries.length === 0) return;
+        const currentMileage = this.settings.getCurrentMileage();
+        if (currentMileage === 0) return;
         
-        const currentMileage = entries[entries.length - 1].odometer;
-        const today = new Date();
-        const reminders = this.maintenanceTracker.getReminders();
-        const dueReminders = [];
+        const dueReminders = this.maintenanceTracker.getDueReminders();
+        const messages = [];
 
-        reminders.forEach(reminder => {
-            const dueDate = new Date(reminder.dueDate);
-            let isDue = false;
-            let message = '';
-
-            // Check mileage-based due status for oil changes
+        dueReminders.forEach(reminder => {
             if (reminder.type === 'oil' && reminder.mileageData) {
-                if (currentMileage >= reminder.mileageData.nextDueMileage) {
-                    isDue = true;
-                    message = `Oil change needed! Current: ${currentMileage} miles, Due at: ${reminder.mileageData.nextDueMileage} miles`;
+                const milesLeft = reminder.mileageData.nextDueMileage - currentMileage;
+                if (milesLeft <= 0) {
+                    messages.push(`Oil change overdue! Current: ${currentMileage} miles\n` +
+                                `Due at: ${reminder.mileageData.nextDueMileage} miles`);
+                } else if (milesLeft <= 500) {
+                    messages.push(`Oil change due soon! ${milesLeft} miles remaining`);
                 }
-            }
-
-            // Check date-based due status for all types
-            if (dueDate <= today) {
-                isDue = true;
-                message = `${reminder.type} maintenance is due (${dueDate.toLocaleDateString()})`;
-            }
-
-            if (isDue) {
-                dueReminders.push(message);
+            } else {
+                messages.push(`${reminder.type} maintenance is due (${new Date(reminder.dueDate).toLocaleDateString()})`);
             }
         });
 
-        if (dueReminders.length > 0) {
-            alert('Maintenance Due:\n\n' + dueReminders.join('\n'));
+        if (messages.length > 0) {
+            alert('Maintenance Reminders:\n\n' + messages.join('\n\n'));
         }
     }
 
     updateDashboardMaintenance() {
         const maintenanceList = document.getElementById('dashboardMaintenanceList');
         const remindersList = document.getElementById('dashboardReminders');
-        const entries = this.mileageTracker.getEntries();
-        const currentMileage = entries.length > 0 ? entries[entries.length - 1].odometer : 0;
+        const currentMileage = this.settings.getCurrentMileage();
         
         // Update recent maintenance
-        const recentRecords = this.maintenanceTracker.getRecords().slice(0, 3);
-        maintenanceList.innerHTML = recentRecords.map(record => `
-            <div class="dashboard-maintenance-item">
-                <div class="maintenance-header">
-                    <span class="maintenance-type">${record.type}</span>
-                    <span class="maintenance-date">${new Date(record.date).toLocaleDateString()}</span>
+        const recentRecords = this.maintenanceTracker.getRecords()
+            .slice(0, 3);
+        
+        maintenanceList.innerHTML = recentRecords.length > 0 
+            ? recentRecords.map(record => `
+                <div class="dashboard-maintenance-item">
+                    <div class="maintenance-header">
+                        <span class="maintenance-type">${record.type}</span>
+                        <span class="maintenance-date">${new Date(record.date).toLocaleDateString()}</span>
+                    </div>
+                    ${record.notes ? `<div class="maintenance-notes">${record.notes}</div>` : ''}
                 </div>
-                ${record.notes ? `<div class="maintenance-notes">${record.notes}</div>` : ''}
-            </div>
-        `).join('');
+            `).join('')
+            : '<div class="no-records">No recent maintenance records</div>';
 
-        // Update upcoming maintenance
+        // Update upcoming reminders
         const upcomingReminders = this.maintenanceTracker.getReminders()
             .map(reminder => {
                 let status = '';
                 if (reminder.type === 'oil' && reminder.mileageData) {
                     const milesLeft = reminder.mileageData.nextDueMileage - currentMileage;
-                    status = `${milesLeft} miles remaining`;
+                    status = milesLeft <= 0 
+                        ? 'OVERDUE!'
+                        : `${milesLeft} miles remaining`;
                 }
                 return {
                     ...reminder,
-                    status
+                    status,
+                    dueDate: new Date(reminder.dueDate).toLocaleDateString()
                 };
             })
             .slice(0, 3);
 
-        remindersList.innerHTML = upcomingReminders.map(reminder => `
-            <div class="dashboard-reminder-item">
-                <div class="reminder-header">
-                    <span class="reminder-type">${reminder.type}</span>
-                    <span class="reminder-date">${new Date(reminder.dueDate).toLocaleDateString()}</span>
+        remindersList.innerHTML = upcomingReminders.length > 0
+            ? upcomingReminders.map(reminder => `
+                <div class="dashboard-reminder-item ${reminder.status === 'OVERDUE!' ? 'overdue' : ''}">
+                    <div class="reminder-header">
+                        <span class="reminder-type">${reminder.type}</span>
+                        <span class="reminder-date">${reminder.dueDate}</span>
+                        <button class="delete-btn" onclick="ui.handleReminderDelete(${reminder.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    ${reminder.status ? `
+                        <div class="reminder-status ${reminder.status === 'OVERDUE!' ? 'overdue' : ''}">
+                            ${reminder.status}
+                        </div>
+                    ` : ''}
                 </div>
-                ${reminder.status ? `<div class="reminder-status">${reminder.status}</div>` : ''}
-            </div>
-        `).join('');
-
-        // Show message if no records
-        if (recentRecords.length === 0) {
-            maintenanceList.innerHTML = '<div class="no-records">No recent maintenance records</div>';
-        }
-        if (upcomingReminders.length === 0) {
-            remindersList.innerHTML = '<div class="no-records">No upcoming maintenance</div>';
-        }
+            `).join('')
+            : '<div class="no-records">No upcoming maintenance</div>';
     }
 
     toggleTheme() {
@@ -341,24 +352,8 @@ export class UI {
     }
 
     handleMaintenanceTypeChange() {
-        const maintenanceType = document.getElementById('maintenanceType').value;
-        const oilChangeMileageGroup = document.getElementById('oilChangeMileageGroup');
-        const nextOilChangeMileageGroup = document.getElementById('nextOilChangeMileageGroup');
-        
-        if (maintenanceType === 'oil') {
-            oilChangeMileageGroup.style.display = 'block';
-            nextOilChangeMileageGroup.style.display = 'block';
-            // Pre-fill with latest odometer reading if available
-            const entries = this.mileageTracker.getEntries();
-            if (entries.length > 0) {
-                const currentMileage = entries[entries.length - 1].odometer;
-                document.getElementById('oilChangeMileage').value = currentMileage;
-                document.getElementById('nextOilChangeMileage').value = currentMileage + 7500;
-            }
-        } else {
-            oilChangeMileageGroup.style.display = 'none';
-            nextOilChangeMileageGroup.style.display = 'none';
-        }
+        // No longer need to show/hide mileage fields
+        // since they're now in settings
     }
 
     handleOdometerInput() {
@@ -382,6 +377,13 @@ export class UI {
             } else {
                 warningDiv.style.display = 'none';
             }
+        }
+    }
+
+    handleReminderDelete(reminderId) {
+        if (confirm('Are you sure you want to delete this reminder?')) {
+            this.maintenanceTracker.deleteReminder(reminderId);
+            this.updateDashboardMaintenance();
         }
     }
 }

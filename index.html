@@ -109,16 +109,6 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        <div class="form-group" id="oilChangeMileageGroup" style="display: none;">
-                            <label for="oilChangeMileage">Current Odometer Reading:</label>
-                            <input type="number" id="oilChangeMileage" min="0" step="1">
-                            <small class="help-text">Current mileage at oil change</small>
-                        </div>
-                        <div class="form-group" id="nextOilChangeMileageGroup" style="display: none;">
-                            <label for="nextOilChangeMileage">Next Oil Change Due At:</label>
-                            <input type="number" id="nextOilChangeMileage" min="0" step="1" value="7500">
-                            <small class="help-text">Miles until next oil change (default 7500)</small>
-                        </div>
                         <div class="form-group">
                             <label for="maintenanceNotes">Notes:</label>
                             <textarea id="maintenanceNotes"></textarea>
@@ -163,6 +153,16 @@
                 <form id="settingsForm" class="entry-form">
                     <h2>Settings</h2>
                     <div class="form-group">
+                        <label for="currentOdometer">Current Odometer Reading:</label>
+                        <input type="number" id="currentOdometer" min="0" step="1" required>
+                        <small class="help-text">Your vehicle's current mileage</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="oilChangeInterval">Oil Change Interval (miles):</label>
+                        <input type="number" id="oilChangeInterval" value="7500" min="1000" required>
+                        <small class="help-text">Miles between oil changes (default 7500)</small>
+                    </div>
+                    <div class="form-group">
                         <label for="units">Distance Units:</label>
                         <select id="units">
                             <option value="miles">Miles</option>
@@ -188,5 +188,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/app.js" type="module"></script>
+    <script>
+        // Make ui instance available globally for the delete button onclick handler
+        window.ui = null;
+    </script>
 </body>
 </html>
